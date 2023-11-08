@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ImgurController {
+public class ImageController {
     
 	@RequestMapping("/hellobro")
 	public String sayHi(){
