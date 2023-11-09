@@ -1,13 +1,19 @@
 package com.imgur.assignment.imgurapiassignment.dao;
 
-import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.imgur.assignment.imgurapiassignment.model.UserDetails;
 
+@Repository
+@Transactional
 public interface UserRepository extends JpaRepository<UserDetails, Integer>{
 
-	List<UserDetails> findById(Integer id);
+	UserDetails findById(Integer id);
+
+	void deleteById(Integer id);
 	
 }
