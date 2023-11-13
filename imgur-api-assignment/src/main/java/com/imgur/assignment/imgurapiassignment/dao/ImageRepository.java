@@ -1,21 +1,18 @@
 package com.imgur.assignment.imgurapiassignment.dao;
 
-
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.imgur.assignment.imgurapiassignment.model.UserDetails;
+import com.imgur.assignment.imgurapiassignment.model.ImageDetails;
+
 
 @Repository
 @Transactional
-public interface UserRepository extends JpaRepository<UserDetails, Integer>{
-
-	UserDetails findById(Integer id);
-
-	void deleteById(Integer id);
-
-	boolean existsById(int id);
+public interface ImageRepository extends JpaRepository<ImageDetails, Integer>{
 	
+	void deleteById(Integer id);
+	
+	ImageDetails findById(Integer id);
 }

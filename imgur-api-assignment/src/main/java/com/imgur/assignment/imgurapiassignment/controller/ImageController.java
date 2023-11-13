@@ -50,4 +50,9 @@ public class ImageController {
 		return userService.deleteUserById(id);
 	}
 	
+	@DeleteMapping("/deleteUser/{userId}/Image/{imageId}")
+	public String deleteUser(@PathVariable int userId, @PathVariable int imageId) {
+		return userService.deleteUserImageById(userId, imageId);
+	}
+	
 }

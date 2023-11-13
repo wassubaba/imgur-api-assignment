@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.imgur.assignment.imgurapiassignment.dao.ImageRepository;
 import com.imgur.assignment.imgurapiassignment.dao.UserRepository;
+import com.imgur.assignment.imgurapiassignment.model.ImageDetails;
 import com.imgur.assignment.imgurapiassignment.model.UserDetails;
 
 @Service
@@ -14,6 +16,9 @@ public class UserService {
 	
 	@Autowired(required=true)
 	private UserRepository repository;
+	
+	@Autowired(required=true)
+	private ImageRepository imgRepo;
 	
 	public UserDetails createUser(UserDetails userDetails) {
 		return repository.save(userDetails);
@@ -38,8 +43,7 @@ public class UserService {
 			oldUser=optionalUser.get();
 			oldUser.setUserName(userDetails.getUserName());
 			oldUser.setEmailAdd(userDetails.getEmailAdd());
-			oldUser.setPassword(userDetails.getPassword());
-			oldUser.setImage(userDetails.getImage());
+			oldUser.setImgDetails(userDetails.getImgDetails());
 			repository.save(oldUser);
 		}else {
 			return new UserDetails();
@@ -50,6 +54,21 @@ public class UserService {
 	public String deleteUserById(int id) {
 		repository.deleteById(id);
 		return "User Got Deleted";
+	}
+
+	public String deleteUserImageById(int id, int imgId) {
+		
+		if(!repository.existsById(id)) {
+			return "User Id Not Found!!!";
+		}
+		
+		Optional<ImageDetails> imageDetails = Optional.ofNullable(imgRepo.findById(imgId));
+		if(imageDetails.isPresent()) {
+			imgRepo.deleteById(imgId);
+		} else {
+			return "Image Id Not Present";
+		}
+		return "Image Got Deleted!!!";
 	}
 
 }
