@@ -1,6 +1,7 @@
 package com.imgur.assignment.imgurapiassignment.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.imgur.assignment.imgurapiassignment.dao.ImageRepository;
 import com.imgur.assignment.imgurapiassignment.dao.UserRepository;
+import com.imgur.assignment.imgurapiassignment.exception.EmptyInputException;
 import com.imgur.assignment.imgurapiassignment.model.ImageDetails;
 import com.imgur.assignment.imgurapiassignment.model.UserDetails;
 
@@ -21,15 +23,15 @@ public class UserService {
 	private ImageRepository imageRepository;
 	
 	public UserDetails createUser(UserDetails userDetails) {
+		
+		if (userDetails.getUserName().isEmpty() || userDetails.getUserName().length() == 0) {
+			throw new EmptyInputException("400", "Input Fields are empty");
+		}
 		return userRepository.save(userDetails);
 	}
 	
 	public UserDetails getUserDetailsById(int id) {
 		return userRepository.findById(id);
-	}
-	
-	public List<UserDetails> createUserList(List<UserDetails> userDetailsList) {
-		return userRepository.save(userDetailsList);
 	}
 	
 	public List<UserDetails> getAllUserDetails(){
@@ -51,22 +53,27 @@ public class UserService {
 		return oldUser;
 	}
 	
-	public String deleteUserById(int id) {
-		userRepository.deleteById(id);
-		return "User Got Deleted";
+	public void deleteUserById(int id) {
+		Optional<UserDetails> optionalUser = Optional.ofNullable(userRepository.findById(id));
+		if(optionalUser.isPresent()) {
+			userRepository.deleteById(id);
+		} else
+		{
+			throw new NoSuchElementException();
+		}
 	}
 
 	public String deleteUserImageById(int id, int imgId) {
 		
 		if(!userRepository.existsById(id)) {
-			return "User Id Not Found!!!";
+			throw new NoSuchElementException();
 		}
 		
 		Optional<ImageDetails> imageDetails = Optional.ofNullable(imageRepository.findById(imgId));
 		if(imageDetails.isPresent()) {
 			imageRepository.deleteById(imgId);
 		} else {
-			return "Image Id Not Present";
+			throw new NoSuchElementException();
 		}
 		return "Image Got Deleted!!!";
 	}

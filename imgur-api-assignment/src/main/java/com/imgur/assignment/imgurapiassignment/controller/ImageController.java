@@ -3,6 +3,8 @@ package com.imgur.assignment.imgurapiassignment.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,38 +23,41 @@ public class ImageController {
 	private UserService userService;
 	
 	@PostMapping("/saveUserDetails")
-	public UserDetails saveUser(@RequestBody UserDetails userDetails) {
-		return userService.createUser(userDetails);
+	public ResponseEntity<?> saveUser(@RequestBody UserDetails userDetails) {
+		UserDetails userDetailsSaved = userService.createUser(userDetails);
+		return new ResponseEntity<UserDetails>(userDetailsSaved, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/getUserDetails/{id}")
-	public UserDetails getUserDetailsById(@PathVariable int id) {
-		return userService.getUserDetailsById(id);
-	}
-	
-	@PostMapping("/saveMultipleUserDetails")
-	public List<UserDetails> saveUserList(@RequestBody List<UserDetails> userDetailsList) {
-		return userService.createUserList(userDetailsList);
+	public ResponseEntity<?> getUserDetailsById(@PathVariable int id) {
+		UserDetails userDetailsRetrieved = userService.getUserDetailsById(id);
+		if (userDetailsRetrieved == null)
+			return new ResponseEntity<String>("No Value is Present in DB", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<UserDetails>(userDetailsRetrieved, HttpStatus.OK);
 	}
 	
 	@GetMapping("/getAllUsers")
-	public List<UserDetails> getAllUsers(){
-		return userService.getAllUserDetails();
+	public ResponseEntity<List<UserDetails>> getAllUsers(){
+		List<UserDetails> userDetailsList = userService.getAllUserDetails();
+		return new ResponseEntity<List<UserDetails>>(userDetailsList, HttpStatus.OK);
 	}
 	
 	@PutMapping("/updateUser")
-	public UserDetails updateUser(@RequestBody UserDetails userDetails) {
-		return userService.updateUser(userDetails);
+	public ResponseEntity<UserDetails> updateUser(@RequestBody UserDetails userDetails) {
+		UserDetails userDetailsUpdated = userService.updateUser(userDetails);
+		return new ResponseEntity<UserDetails>(userDetailsUpdated, HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/deleteUser/{id}")
-	public String deleteUser(@PathVariable int id) {
-		return userService.deleteUserById(id);
+	public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+		userService.deleteUserById(id);
+		return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
 	}
 	
 	@DeleteMapping("/deleteUser/{userId}/Image/{imageId}")
-	public String deleteUser(@PathVariable int userId, @PathVariable int imageId) {
-		return userService.deleteUserImageById(userId, imageId);
+	public ResponseEntity<String> deleteUser(@PathVariable int userId, @PathVariable int imageId) {
+		String message = userService.deleteUserImageById(userId, imageId);
+		return new ResponseEntity<String>(message, HttpStatus.ACCEPTED);
 	}
 	
 }
