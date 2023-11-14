@@ -15,36 +15,36 @@ import com.imgur.assignment.imgurapiassignment.model.UserDetails;
 public class UserService {
 	
 	@Autowired(required=true)
-	private UserRepository repository;
+	private UserRepository userRepository;
 	
 	@Autowired(required=true)
-	private ImageRepository imgRepo;
+	private ImageRepository imageRepository;
 	
 	public UserDetails createUser(UserDetails userDetails) {
-		return repository.save(userDetails);
+		return userRepository.save(userDetails);
 	}
 	
 	public UserDetails getUserDetailsById(int id) {
-		return repository.findById(id);
+		return userRepository.findById(id);
 	}
 	
 	public List<UserDetails> createUserList(List<UserDetails> userDetailsList) {
-		return repository.save(userDetailsList);
+		return userRepository.save(userDetailsList);
 	}
 	
 	public List<UserDetails> getAllUserDetails(){
-		return repository.findAll();
+		return userRepository.findAll();
 	}
 	
 	public UserDetails updateUser(UserDetails userDetails) {
 		UserDetails oldUser = null;
-		Optional<UserDetails> optionalUser = Optional.ofNullable(repository.findById(userDetails.getId()));
+		Optional<UserDetails> optionalUser = Optional.ofNullable(userRepository.findById(userDetails.getId()));
 		if(optionalUser.isPresent()) {
 			oldUser=optionalUser.get();
 			oldUser.setUserName(userDetails.getUserName());
 			oldUser.setEmailAdd(userDetails.getEmailAdd());
 			oldUser.setImgDetails(userDetails.getImgDetails());
-			repository.save(oldUser);
+			userRepository.save(oldUser);
 		}else {
 			return new UserDetails();
 		}
@@ -52,19 +52,19 @@ public class UserService {
 	}
 	
 	public String deleteUserById(int id) {
-		repository.deleteById(id);
+		userRepository.deleteById(id);
 		return "User Got Deleted";
 	}
 
 	public String deleteUserImageById(int id, int imgId) {
 		
-		if(!repository.existsById(id)) {
+		if(!userRepository.existsById(id)) {
 			return "User Id Not Found!!!";
 		}
 		
-		Optional<ImageDetails> imageDetails = Optional.ofNullable(imgRepo.findById(imgId));
+		Optional<ImageDetails> imageDetails = Optional.ofNullable(imageRepository.findById(imgId));
 		if(imageDetails.isPresent()) {
-			imgRepo.deleteById(imgId);
+			imageRepository.deleteById(imgId);
 		} else {
 			return "Image Id Not Present";
 		}
